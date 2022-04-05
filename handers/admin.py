@@ -75,15 +75,13 @@ async def registration_clents(message:types.Message):
     id = message.from_user.id
     username = message.from_user.username
     fullname = message.from_user.full_name
-    psql_db.cursor.execute(f"SELECT id from users where id = {id}")
+    psql_db.cursor.execute(f"SELECT INTO users WHERE id = {id}")
     result = psql_db.cursor.fetchone()
 
     if not result:
-        psql_db.cursor.execute(f"INSERT into users(id, username, fullname) values (%s, %s, %s), "
-                               f"(id, username, fullname)")
+        psql_db.cursor.execute(f"INSERT INTO users (id, username, fullname) VALUES (%s, %s, %s)", (id, username, fullname))
         psql_db.db.commit()
-        await message.reply("Регистрация прошла успешно")
-
+        await message.reply("Registration successful")
 
 def dp_register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(make_changes_command, commands=['moderator'], is_chat_admin=True)
