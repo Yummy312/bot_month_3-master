@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Text
 from keyboard import keyboard
 from data_base import sqlite_db
 from keyboard import admin_panel
-
+from data_base import psql_db
 ID = None
 
 
@@ -71,7 +71,21 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     await message.reply('Done')
 
 
+async def registration_clents(message:types.Message):
+    id = message.from_user.id
+    username = message.from_user.username
+    fullname = message.from_user.full_name
+    psql_db.cursor.execute(f"SELECT id from users where id = {id}")
+    result = psql_db.cursor.fetchone()
+
+    if not result:
+        psql_db.cursor.execute(f"INSERT into users(id, username, fullname) values (%s, %s, %s), "
+                               f"(id, username, fullname)")
+        psql_db.db.commit()
+        await message.reply("Регистрация прошла успешно")
+
 def dp_register_handlers_admin(dp: Dispatcher):
+    dp.register_message_handler(registration_clents, commands=['регистрация'])
     dp.register_message_handler(make_changes_command, commands=['moderator'], is_chat_admin=True)
     dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*" )
     dp.register_message_handler(cancel_handler, state="*", commands='отмена')
