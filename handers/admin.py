@@ -84,8 +84,8 @@ async def registration_clents(message:types.Message):
         psql_db.db.commit()
         await message.reply("Регистрация прошла успешно")
 
+
 def dp_register_handlers_admin(dp: Dispatcher):
-    dp.register_message_handler(registration_clents, commands=['регистрация'])
     dp.register_message_handler(make_changes_command, commands=['moderator'], is_chat_admin=True)
     dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state="*" )
     dp.register_message_handler(cancel_handler, state="*", commands='отмена')
@@ -94,3 +94,4 @@ def dp_register_handlers_admin(dp: Dispatcher):
     dp.register_message_handler(load_id, state=FSMAdmin.id)
     dp.register_message_handler(load_username, state=FSMAdmin.username)
     dp.register_message_handler(load_lastname, state=FSMAdmin.lastname)
+    dp.register_message_handler(registration_clents, commands=['register'])
